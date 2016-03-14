@@ -67,7 +67,7 @@ You can run the training script, at minimum, like this:
 th train.lua -trainList train.txt -valList val.txt -testList test.txt -numClasses 101 -videoHeight 240 -videoWidth 320
 ```
 
-By default, this will dump 8 random frames at 5 FPS in native resolution representing semi-equally sized chunks for each video, train for 30 epochs, and save checkpoints to the trained models with names like `checkpoints/checkpoint_3.t7`. This also runs with CUDA by default. Run on CPU with `-cuda 0`.
+By default, this will dump 8 random frames at 5 FPS in native resolution representing semi-equally sized chunks for each video, train for 30 epochs, and save checkpoints to the trained models with names like `checkpoints/checkpoint_3.t7`. This also runs with CUDA by default. Run on CPU with `-cuda 0`. The default values are tuned to fit on an NVIDIA GPU with 4GB VRAM.
 
 Some important parameters for training to tune are:
 - `-scaledHeight`: optional downscaling
