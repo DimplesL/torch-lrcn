@@ -105,6 +105,7 @@ The list of parameters is:
 # Acknowledgments
 - J. Donahue, L. A. Hendricks, S. Guadarrama, M. Rohrbach, S. Venugopalan, K. Saenko, and T. Darrell. Long-term recurrent convolutional networks for visual recognition and description. In CVPR, 2015.
 - [Justin Johnson](https://github.com/jcjohnson) for his [torch-rnn](https://github.com/jcjohnson/torch-rnn) library, which this library was heavily modeled after.
+- Serena Yeung for the project idea, direction, and advice.
 - Stanford University CS 231N staff for granting funds for AWS EC2 testing.
 
 # TODOs
