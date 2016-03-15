@@ -1,5 +1,7 @@
 # torch-lrcn
-torch-lrcn provides a framework in Torch7 for action detection and recognition using Long-term Recurrent Convolutional Networks. The LRCN model was [proposed by Jeff Donahue et. al in this paper](http://arxiv.org/pdf/1411.4389v3.pdf). Find more information about their Caffe code and experiments [here](http://www.eecs.berkeley.edu/~lisa_anne/LRCN_video).
+torch-lrcn provides a framework in Torch7 for action recognition using Long-term Recurrent Convolutional Networks. The LRCN model was [proposed by Jeff Donahue et. al in this paper](http://arxiv.org/pdf/1411.4389v3.pdf). Find more information about their Caffe code and experiments [here](http://www.eecs.berkeley.edu/~lisa_anne/LRCN_video).
+
+Note that currently this library does **not** support fine-grained action detection (i.e. a specific label for each frame). The detection accuracy it computes is simply the frame accuracy using only a single label for each video.
 
 # Installation
 ## System setup
@@ -106,9 +108,10 @@ The list of parameters is:
 - J. Donahue, L. A. Hendricks, S. Guadarrama, M. Rohrbach, S. Venugopalan, K. Saenko, and T. Darrell. Long-term recurrent convolutional networks for visual recognition and description. In CVPR, 2015.
 - [Justin Johnson](https://github.com/jcjohnson) for his [torch-rnn](https://github.com/jcjohnson/torch-rnn) library, which this library was heavily modeled after.
 - Serena Yeung for the project idea, direction, and advice.
-- Stanford University CS 231N staff for granting funds for AWS EC2 testing.
+- Stanford University [CS 231N](http://cs231n.stanford.edu/) course staff for granting funds for AWS EC2 testing.
 
 # TODOs
-- Add unit tests
 - Parallelize data loading
 - Write more documentation in a doc folder about training flags
+- Implement fine grained action detection.
+- Add unit tests
