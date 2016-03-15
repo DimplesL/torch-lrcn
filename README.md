@@ -111,7 +111,8 @@ The list of parameters is:
 - Stanford University [CS 231N](http://cs231n.stanford.edu/) course staff for granting funds for AWS EC2 testing.
 
 # TODOs
-- Parallelize data loading
-- Write more documentation in a doc folder about training flags
-- Implement fine grained action detection.
-- Add unit tests
+- Separate data preprocessing into its own step.
+- Parallelize data loading.
+- Write more documentation in a doc folder about training flags.
+- Implement fine grained action detection..
+- Add unit tests.
