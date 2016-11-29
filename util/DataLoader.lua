@@ -326,7 +326,7 @@ function getMeanTrainingImage(videoPaths, fullDumpPath, opt)
     end
   end
 
-  local meanImage = torch.Tensor(opt.numChannels, opt.scaledHeight, opt.scaledHeight)
+  local meanImage = torch.Tensor(opt.numChannels, opt.scaledWidth, opt.scaledHeight)
   for i = 1, opt.numChannels do
     meanImage[i]:fill(means[i] / numFrames)
   end
