@@ -76,7 +76,7 @@ function DataLoader:nextBatch(split)
   	local videoPath = self.splits[split].paths[index]
   	local videoLabel = self.splits[split].labels[index]
 
-  	-- get video file 
+  	-- get video file
   	local videoFilename = paths.basename(videoPath)
 
   	-- get path of dumped frames for video
@@ -103,13 +103,13 @@ function DataLoader:nextBatch(split)
 		  labels = torch.cat(frameLabels, 1):type('torch.FloatTensor'),
 		}
 
-		setmetatable(batch, 
-		  {__index = function(t, k) 
-		                  return {t.data[k], t.labels[k]} 
+		setmetatable(batch,
+		  {__index = function(t, k)
+		                  return {t.data[k], t.labels[k]}
 		              end}
 		);
 
-		function batch:size() 
+		function batch:size()
 		  return self.data:size(1)
 		end
 
@@ -125,7 +125,7 @@ end
   Inputs:
     - videoListPath: path to a file containing paths to videos followed by label
 
-  Adds each video in the file at videoListPath into a table. An example video 
+  Adds each video in the file at videoListPath into a table. An example video
   list entry would be
 
   <videoPath> <label number>
@@ -134,7 +134,7 @@ end
 
   <intermediate directory>/<videoFilename>
 
-  and is accessible from the working directory. Each video path and label is 
+  and is accessible from the working directory. Each video path and label is
   extracted and stored into separate tables. Both tables are returned.
 ]]--
 function loadList(videoListPath)
@@ -173,17 +173,17 @@ end
     - opt: parameters needed for video frame extraction
 
   Dumps each video in videoPaths to the fullDumpPath where fullDumpPath is
-  
+
   <dumpPath>/<videoListFilename>_videos
   example: /data/train.txt_videos
 
   Each video path is extracted, as well as the actual video file name. A path in
   videoPaths would be
-  
+
   <intermediate path>/<videoFilename>
   example: /data/videos/video1.avi
 
-  The video is then read in from that path and opt.seqLength random frames of 
+  The video is then read in from that path and opt.seqLength random frames of
   native  resolution are saved in chronological order at
 
   <fullDumpPath>/<videoFilename>_frames/frame<#>.<imageType>
@@ -251,7 +251,7 @@ function dumpVideoFrames(videoPaths, fullDumpPath, opt)
         if err then
           utils.printTime(err .. " for %s" % videoOutputDirectory)
         end
-        
+
         for k, v in pairs(frameIndices) do
           image.save(paths.concat(videoOutputDirectory, 'frame%d.%s' % {k, opt.imageType}), videoTensor[v])
         end
@@ -273,17 +273,17 @@ end
     - opt: parameters needed for video frame extraction
 
   Dumps each video in videoPaths to the fullDumpPath where fullDumpPath is
-  
+
   <dumpPath>/<videoListFilename>_videos
   example: /data/train.txt_videos
 
   Each video path is extracted, as well as the actual video file name. A path in
   videoPaths would be
-  
+
   <intermediate path>/<videoFilename>
   example: /data/videos/video1.avi
 
-  The video is then read in from that path and opt.seqLength random frames of 
+  The video is then read in from that path and opt.seqLength random frames of
   native  resolution are saved in chronological order at
 
   <fullDumpPath>/<videoFilename>_frames/frame<#>.<imageType>
@@ -298,7 +298,7 @@ end
     - fullDumpPath: directory to dump video frames
     - opt: parameters needed for video frame extraction
 
-  Get the mean video frame after scaling. The mean frame is calculated in an 
+  Get the mean video frame after scaling. The mean frame is calculated in an
   unorthodox way because of possible oveflow and memory errors.
 ]]--
 function getMeanTrainingImage(videoPaths, fullDumpPath, opt)
@@ -306,7 +306,7 @@ function getMeanTrainingImage(videoPaths, fullDumpPath, opt)
   local numFrames = 0
 
   for _, videoPath in pairs(videoPaths) do
-    -- get video file 
+    -- get video file
     local videoFilename = paths.basename(videoPath)
 
     -- get path of dumped frames for video
@@ -314,21 +314,21 @@ function getMeanTrainingImage(videoPaths, fullDumpPath, opt)
 
     -- check if this video qualified to be read (had opt.seqLength or more frames)
     if paths.dirp(videoPath) then
-      numFrames = numFrames + opt.seqLength
       local framePath = paths.concat(videoPath, 'frame%d.' .. opt.imageType)
       for i = 1, opt.seqLength do
+        numFrames = numFrames + 1
         local frame = image.load(framePath % i, opt.numChannels, 'double')
         frame = image.scale(frame, '%dx%d' % {opt.scaledWidth, opt.scaledHeight}) -- scales with string 'WxH', outputs channels x height x width
-        for j = 1, opt.numChannels do
-          means[j] = means[j] + frame[j]:sum() / (opt.scaledWidth * opt.scaledHeight)
+        for channel = 1, opt.numChannels do
+          means[channel] = means[channel] + (frame[channel]:mean() - means[channel]) / numFrames
         end
       end
     end
   end
 
   local meanImage = torch.Tensor(opt.numChannels, opt.scaledHeight, opt.scaledWidth)
-  for i = 1, opt.numChannels do
-    meanImage[i]:fill(means[i] / numFrames)
+  for channel = 1, opt.numChannels do
+    meanImage[channel]:fill(means[channel])
   end
 
   return meanImage
