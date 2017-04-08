@@ -41,6 +41,8 @@ cmd:option('-numEpochs', 30)
 cmd:option('-learningRate', 1e-6)
 cmd:option('-lrDecayFactor', 0.5)
 cmd:option('-lrDecayEvery', 5)
+cmd:option("-weightDecay", 2.5e-2, "L2 regularization")
+cmd:option("-weightInitializationMethod", "kaiming", "heuristic, xavier, xavier_caffe, or none")
 
 -- Output options
 cmd:option('-printEvery', 1) -- Print the loss after every n epochs
@@ -108,6 +110,9 @@ opt.dumpFrames = 0
 -- Initialize model and criterion
 utils.printTime("Initializing LRCN")
 local model = LRCN(opt):type(opt.dtype)
+if opt.weightInitializationMethod ~= "none" then
+  model = require("weight-init")(model, opt.weightInitializationMethod)
+end
 local criterion = nn.ClassNLLCriterion():type(opt.dtype)
 
 --[[
@@ -123,7 +128,10 @@ function train(model)
   local valLossHistory = {}
   local valLossHistoryEpochs = {}
 
-  local config = {learningRate = opt.learningRate}
+  local config = {
+    learningRate = opt.learningRate,
+    weightDecay = opt.weightDecay
+  }
   local params, gradParams = model:getParameters()
 
   for i = 1, opt.numEpochs do
@@ -134,7 +142,10 @@ function train(model)
 
     if i % opt.lrDecayEvery == 0 then
       local oldLearningRate = config.learningRate
-      config = {learningRate = oldLearningRate * opt.lrDecayFactor}
+      config = {
+        learningRate = oldLearningRate * opt.lrDecayFactor,
+        weightDecay = opt.weightDecay
+      }
     end
 
     local batch = loader:nextBatch('train')
